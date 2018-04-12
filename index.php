@@ -39,7 +39,18 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
 
                 if(mysqli_stmt_execute($stmt)){
 
-                    echo "ID: , $id";
+                    echo "<h1>Data</h1>";
+                    echo "ID: $id";
+                    echo "<br>";
+                    echo "X: $x";
+                    echo "<br>";
+                    echo "Y: $y";
+                    echo "<br>";                    
+                    echo "Temp: $temp";
+                    echo "<br>";
+                    echo "Sweat: $sweat";
+                    echo "<br>";
+                    echo "State: $state";
 
                 } else {
                     echo "Please try again later.";
