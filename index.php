@@ -12,38 +12,40 @@ function getTime() {
     return $server_time;
 }
 
-$id = $x = $y = $z = $temp = $sweat = "";
+$id = $x = $y = $temp = $sweat = $state = "";
 
 if($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $id = mysqli_real_escape_string($link,$_GET['id']);
     $x = mysqli_real_escape_string($link,$_GET['x']);
     $y = mysqli_real_escape_string($link,$_GET['y']);
-    $z = mysqli_real_escape_string($link,$_GET['z']);
     $temp = mysqli_real_escape_string($link,$_GET['temp']);
     $sweat = mysqli_real_escape_string($link,$_GET['sweat']);
+    $state = mysqli_real_escape_string($link,$_GET['state']);
 
-    $sql = "INSERT INTO `data`(`horseId`, `accX`,`accY`,`accZ`,`temperature`,`humidity`, `createdAt`) VALUES (?,?,?,?,?,?,?)";
+   if (!empty($id) && !empty($state)) {
+    $sql = "INSERT INTO `data`(`horseId`, `accX`,`accY`,`temperature`,`sweat`,`state`, `createdAt`) VALUES (?,?,?,?,?,?,?)";
 
     if($stmt = mysqli_prepare($link, $sql)) {
 
-        mysqli_stmt_bind_param($stmt, "sssssss", $p_horseId, $p_accX, $p_accY, $p_accZ, $p_temp, $p_hum, $p_time);
+        mysqli_stmt_bind_param($stmt, "sssssss", $p_horseId, $p_accX, $p_accY, $p_temp, $p_sweat, $p_state, $p_time);
         $p_horseId = $id;
         $p_accX = $x;
         $p_accY = $y;
-        $p_accZ = $z;
         $p_temp = $temp;
-        $p_hum = $sweat;
+        $p_sweat = $sweat;
+        $p_state = $state;
         $p_time = getTime();
 
                 if(mysqli_stmt_execute($stmt)){
 
-                    echo "OK";
+                    echo "ID: , $id";
 
                 } else {
                     echo "Please try again later.";
                 }
 
     }
+   }
     
  }

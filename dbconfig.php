@@ -3,7 +3,7 @@
 $DBMS = 'MySQL';
 
 $DB_Param = array();
-$DB_Param['server'] = 'localhost:3306';
+$DB_Param['server'] = 'localhost';
 $DB_Param['database'] = 'remembu8_equinealarm1';
 $DB_Param['user'] = 'remembu8_darren';
 $DB_Param['password'] = 'Darren123';
