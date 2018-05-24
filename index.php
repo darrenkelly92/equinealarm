@@ -1,62 +1,150 @@
-<?php
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Defence Forces Equine Alarm</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Defence Forces Equine Alarm</a>
+</nav>
+<div class="container">
 
-require_once("dbconfig.php");
+  <h1>
+  </h1>
+
+  <div class="row">
+
+    <div class="col-sm-4">
+
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            Horse Info
+          </h4>
+        </div>
+        <div class="card-body">
+          <p><strong>Horse ID: </strong> DF0001</p>
+          <p><strong>Horse Name: </strong> Jesse</p>
+          <p><strong>Horse Owner: </strong> Defence Forces Ireland</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-sm-8">
+
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            Horse Status
+          </h4>
+        </div>
+        <div class="card-body">
+<?php
+include_once "dbconfig.php";
+$state = 4;
 
 /**
- * @return DateTime|string
+ * GET  data fro temperature over time graph
  */
-function getTime() {
-    date_default_timezone_set("Europe/Dublin");
-    $server_time = new DateTime();
-    $server_time = $server_time->format('Y-m-d H:i:s');
-    return $server_time;
+//the SQL query to be executed
+$query = "SELECT `state` FROM `data` ORDER BY `createdAt` DESC LIMIT 1";
+//storing the result of the executed query
+$result = $link->query($query);
+//check if there is any data returned by the SQL Query
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $state = $row['state'];
+    }
+}
+//Closing the connection to DB
+$link->close();
+
+if ($state == 0) {
+    echo "<div class=\"alert alert-success\" role=\"alert\">
+        <strong>Healthy</strong>
+            <p>Horse is exhibiting healthy behaviour.</p>
+          </div>";
+} elseif ($state == 1) {
+    echo "<div class=\"alert alert-warning\" role=\"alert\">
+            <strong>Warning</strong>
+            <p>Horse is exhibiting suspicious behaviour.</p>
+            </div>";
+} else {
+    echo "<div class=\"alert alert-danger\" role=\"alert\">
+            <strong>Danger</strong>
+            <p>Horse is in distress.</p>
+          </div>";
 }
 
-$id = $x = $y = $temp = $sweat = $state = "";
+?>
 
-if($_SERVER["REQUEST_METHOD"] == "GET") {
 
-    $id = mysqli_real_escape_string($link,$_GET['id']);
-    $x = mysqli_real_escape_string($link,$_GET['x']);
-    $y = mysqli_real_escape_string($link,$_GET['y']);
-    $temp = mysqli_real_escape_string($link,$_GET['temp']);
-    $sweat = mysqli_real_escape_string($link,$_GET['sweat']);
-    $state = mysqli_real_escape_string($link,$_GET['state']);
 
-   if (!empty($id) && !empty($state)) {
-    $sql = "INSERT INTO `data`(`horseId`, `accX`,`accY`,`temperature`,`sweat`,`state`, `createdAt`) VALUES (?,?,?,?,?,?,?)";
 
-    if($stmt = mysqli_prepare($link, $sql)) {
+          </div>
+        </div>
+      </div>
 
-        mysqli_stmt_bind_param($stmt, "sssssss", $p_horseId, $p_accX, $p_accY, $p_temp, $p_sweat, $p_state, $p_time);
-        $p_horseId = $id;
-        $p_accX = $x;
-        $p_accY = $y;
-        $p_temp = $temp;
-        $p_sweat = $sweat;
-        $p_state = $state;
-        $p_time = getTime();
+    <div class="col-sm-12">
 
-                if(mysqli_stmt_execute($stmt)){
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            Horse Temperature
+          </h4>
+        </div>
+        <div class="card-body">
+          <div id="temperature_chart-container">Temperature will render here</div>
+        </div>
+      </div>
 
-                    echo "<h1>Data</h1>";
-                    echo "ID: $id";
-                    echo "<br>";
-                    echo "X: $x";
-                    echo "<br>";
-                    echo "Y: $y";
-                    echo "<br>";                    
-                    echo "Temp: $temp";
-                    echo "<br>";
-                    echo "Sweat: $sweat";
-                    echo "<br>";
-                    echo "State: $state";
 
-                } else {
-                    echo "Please try again later.";
-                }
+    </div>
 
-    }
-   }
-    
- }
+    <div class="col-sm-12">
+
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            Horse Sweat
+          </h4>
+        </div>
+        <div class="card-body">
+          <div id="sweat_chart-container">Sweat will render here</div>
+        </div>
+      </div>
+
+    </div>
+
+      <div class="col-sm-12">
+
+          <div class="card">
+              <div class="card-header">
+                  <h4>
+                      Horse Movement
+                  </h4>
+              </div>
+              <div class="card-body">
+                  <div id="movement_chart-container">Sweat will render here</div>
+              </div>
+          </div>
+
+      </div>
+
+  </div>
+</div>
+</div>
+
+<script src="js/jquery-3.3.1.js"></script>
+<script src="js/fusioncharts.js"></script>
+<script src="js/fusioncharts.charts.js"></script>
+<script src="js/themes/fusioncharts.theme.zune.js"></script>
+<script src="js/app.js"></script>
+<!-- Bootstrap Js CDN -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>
